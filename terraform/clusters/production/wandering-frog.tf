@@ -1,6 +1,6 @@
 resource "google_container_cluster" "wandering-frog" {
   name     = "wandering-frog"
-  location = "us-central1"
+  location = "us-central1-a"
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -14,7 +14,7 @@ resource "google_container_cluster" "wandering-frog" {
 
   maintenance_policy {
     daily_maintenance_window {
-      start_time = "10:00" # UTC
+      start_time = "09:00" # UTC
     }
   }
 
@@ -24,10 +24,11 @@ resource "google_container_cluster" "wandering-frog" {
 }
 
 resource "google_container_node_pool" "wandering-frog-nodes" {
-  name       = "wandering-frog-node-pool"
-  location   = "us-central1"
-  cluster    = google_container_cluster.wandering-frog.name
-  node_count = 1
+  name           = "${google_container_cluster.wandering-frog.name}-node-pool"
+  location       = google_container_cluster.wandering-frog.location
+  cluster        = google_container_cluster.wandering-frog.name
+  node_count     = 1
+//  node_locations = [google_container_cluster.wandering-frog.location]
 
   management {
     auto_repair  = true
@@ -42,7 +43,7 @@ resource "google_container_node_pool" "wandering-frog-nodes" {
   node_config {
     machine_type = "e2-micro"
     disk_size_gb = 10
-    image_type   = "cos"
+    image_type   = "COS"
     preemptible  = true
 
     shielded_instance_config {
