@@ -28,7 +28,6 @@ resource "google_container_node_pool" "wandering-frog-nodes" {
   location       = google_container_cluster.wandering-frog.location
   cluster        = google_container_cluster.wandering-frog.name
   node_count     = 1
-//  node_locations = [google_container_cluster.wandering-frog.location]
 
   management {
     auto_repair  = true
