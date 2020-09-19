@@ -40,9 +40,14 @@ resource "google_container_node_pool" "wandering-frog-nodes" {
     max_unavailable = 0
   }
 
+  autoscaling {
+    max_node_count = 1
+    min_node_count = 0
+  }
+
   node_config {
     machine_type = "e2-micro"
-    disk_size_gb = 10
+    disk_size_gb = 20
     image_type   = "COS"
     preemptible  = true
 
@@ -50,6 +55,15 @@ resource "google_container_node_pool" "wandering-frog-nodes" {
       enable_secure_boot = true
       enable_integrity_monitoring = true
     }
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/servicecontrol",
+      "https://www.googleapis.com/auth/service.management.readonly",
+      "https://www.googleapis.com/auth/trace.append",
+    ]
 
     metadata = {
       disable-legacy-endpoints = "true"
