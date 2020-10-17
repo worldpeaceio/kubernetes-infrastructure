@@ -45,7 +45,7 @@ resource "google_container_node_pool" "wandering-frog-nodes" {
   }
 
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "e2-small"
     disk_size_gb = 20
     image_type   = "COS"
     preemptible  = true
