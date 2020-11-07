@@ -4,25 +4,13 @@ locals {
   cluster_zone = "us-central1-a"
 }
 
-data "google_compute_network" "production" {
-  name = var.project_id
-}
-
-data "google_compute_subnetwork" "royal-brook" {
-  name   = local.cluster_name
-  region = local.cluster_region
-}
-
 resource "google_container_cluster" "royal-brook" {
   name     = local.cluster_name
   location = local.cluster_zone
+  provider = google-beta // Need for networking mode VPC_NATIVE
 
-  network    = data.google_compute_network.production.self_link
-  subnetwork = data.google_compute_subnetwork.royal-brook.self_link
-  ip_allocation_policy {
-    cluster_secondary_range_name = "${local.cluster_name}-pods"
-    services_secondary_range_name = "${local.cluster_name}-services"
-  }
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
 
   private_cluster_config {
     enable_private_endpoint = false
@@ -101,30 +89,3 @@ resource "google_container_node_pool" "royal-brook-nodes" {
     }
   }
 }
-
-//resource "google_compute_router" "router" {
-//  name    = "my-router"
-//  region  = google_compute_subnetwork.wandering-frog.region
-//  network = google_compute_network.net.id
-//}
-//
-//resource "google_compute_address" "address" {
-//  count  = 2
-//  name   = "nat-manual-ip-${count.index}"
-//  region = google_compute_subnetwork.subnet.region
-//}
-//
-//resource "google_compute_router_nat" "nat_manual" {
-//  name   = "my-router-nat"
-//  router = google_compute_router.router.name
-//  region = google_compute_router.router.region
-//
-//  nat_ip_allocate_option = "MANUAL_ONLY"
-//  nat_ips                = google_compute_address.address.*.self_link
-//
-//  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
-//  subnetwork {
-//    name                    = google_compute_subnetwork.subnet.id
-//    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
-//  }
-//}
