@@ -9,3 +9,11 @@ provider "google-beta" {
 data "google_project" "project" {
   project_id = var.project_id
 }
+
+module "k8s-royal-brook" {
+  source = "../../module/gke/"
+  project_id   = var.project_id
+
+  cluster_name = "royal-brook"
+  cluster_zone = "us-central1-a"
+}

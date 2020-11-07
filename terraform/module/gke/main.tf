@@ -1,12 +1,6 @@
-locals {
-  cluster_name = "royal-brook"
-  cluster_region = "us-central1"
-  cluster_zone = "us-central1-a"
-}
-
-resource "google_container_cluster" "royal-brook" {
-  name     = local.cluster_name
-  location = local.cluster_zone
+resource "google_container_cluster" "default" {
+  name     = var.cluster_name
+  location = var.cluster_zone
   provider = google-beta // Need for networking mode VPC_NATIVE
 
   networking_mode = "VPC_NATIVE"
@@ -18,12 +12,16 @@ resource "google_container_cluster" "royal-brook" {
     master_ipv4_cidr_block  = "172.16.0.0/28"
   }
 
-  master_authorized_networks_config {}
+  master_authorized_networks_config {
+//    cidr_blocks {
+//      cidr_block = "" // Use /32 for single IP
+//    }
+  }
 
   enable_shielded_nodes = true
 
   workload_identity_config {
-    identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
+    identity_namespace = "${var.project_id}.svc.id.goog"
   }
 
   release_channel {
@@ -43,10 +41,10 @@ resource "google_container_cluster" "royal-brook" {
   initial_node_count       = 1
 }
 
-resource "google_container_node_pool" "royal-brook-nodes" {
-  name           = "${local.cluster_name}-node-pool"
-  location       = local.cluster_zone
-  cluster        = local.cluster_name
+resource "google_container_node_pool" "default-nodes" {
+  name           = "${var.cluster_name}-node-pool"
+  location       = var.cluster_zone
+  cluster        = var.cluster_name
   node_count     = 1
 
   management {
