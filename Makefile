@@ -17,3 +17,10 @@ deploy-%:
 	cd terraform/clusters/$*; \
 		terraform init; \
 		terraform apply
+
+.PHONY: destroy-%
+destroy-%:
+	cd terraform/clusters/$*; \
+		terraform init; \
+		terraform destroy
+
