@@ -1,4 +1,4 @@
-PROJECTS := production
+PROJECTS := ipfs_dev
 
 .PHONY: lint
 lint:
@@ -23,4 +23,3 @@ destroy-%:
 	cd terraform/clusters/$*; \
 		terraform init; \
 		terraform destroy
-
